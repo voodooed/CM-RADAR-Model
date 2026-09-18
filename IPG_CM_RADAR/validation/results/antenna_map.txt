@@ -1,0 +1,30 @@
+reference map : .../win64-15.1/Data/Sensor/Radar_Default
+  BeamWidth   = 20.0 15.0 deg
+  ScanRange   = 0.0 0.0 deg
+  AntennaEff  = 1.0
+  samples     = 181 x 181, azimuth -90..90 deg
+  peak gain   = 20.3655 dB
+
+Reference Manual Eq. 507/508 only (f = sinc(pi nu_y) sinc(pi nu_z), G0 = 4 pi a b / lambda^2):
+  documented model
+    peak gain   reference = 20.3655 dB   model = 20.3310 dB   (delta -0.0345 dB)
+    inside the 3 dB main lobe          cells=   237  mean= 0.038 dB  max= 0.088 dB
+    inside the 10 dB main lobe         cells=   701  mean= 0.119 dB  max= 0.300 dB
+    everywhere above -25 dB            cells=  5179  mean= 1.318 dB  max= 6.114 dB
+    everywhere above -40 dB            cells= 22349  mean= 3.128 dB  max= 6.259 dB
+
+Same, plus the inferred Huygens obliquity factor (1 + cos Theta)/2:
+  documented model + obliquity
+    peak gain   reference = 20.3655 dB   model = 20.3310 dB   (delta -0.0345 dB)
+    inside the 3 dB main lobe          cells=   237  mean= 0.012 dB  max= 0.028 dB
+    inside the 10 dB main lobe         cells=   701  mean= 0.042 dB  max= 0.119 dB
+    everywhere above -25 dB            cells=  5151  mean= 0.120 dB  max= 0.597 dB
+    everywhere above -40 dB            cells= 22135  mean= 0.210 dB  max= 2.801 dB
+
+Null positions (they fix the aperture size a, b):
+    azimuth  : file  23.0 deg   theory asin(lambda/a) = 23.21 deg
+    elevation: file  17.0 deg   theory asin(lambda/b) = 17.19 deg
+
+3 dB beam widths (sampled on the 1 deg grid of the file):
+    azimuth  : 18.0 deg   (parameter BeamWidth_h = 20.0 deg)
+    elevation: 14.0 deg   (parameter BeamWidth_v = 15.0 deg)
