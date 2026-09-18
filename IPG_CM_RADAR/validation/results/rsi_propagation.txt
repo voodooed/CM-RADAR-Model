@@ -1,0 +1,39 @@
+==============================================================================
+1. Flat plate RCS  (physical optics:  sigma = 4 pi A^2 / lambda^2)
+==============================================================================
+ plate [m]   R [m]  sigma_PO [dBm2]  sigma_sim [dBm2]  error [dB]
+   (plate kept in the far field:  R > 2 D^2 / lambda, as the manual requires
+    for the interaction points)
+      0.08    30.0            15.31             15.64        0.33   (far-field dist   3.3 m)
+      0.08    60.0            15.31             13.58       -1.73   (far-field dist   3.3 m)
+      0.10    30.0            19.19             19.12       -0.06   (far-field dist   5.1 m)
+      0.10    60.0            19.19             20.62        1.43   (far-field dist   5.1 m)
+      0.15    30.0            26.23             26.62        0.39   (far-field dist  11.6 m)
+      0.15    60.0            26.23             25.60       -0.63   (far-field dist  11.6 m)
+
+  mean |error| = 0.76 dB, max = 1.73 dB
+
+==============================================================================
+2. Range law  (expect P ~ 1/R^4  ->  -12 dB per doubling)
+==============================================================================
+   R =  20.0 m   P_rx =  -113.58 dBW
+   R =  40.0 m   P_rx =  -126.67 dBW   delta = -13.08 dB
+   R =  80.0 m   P_rx =  -138.74 dBW   delta = -12.07 dB
+   R = 160.0 m   P_rx =  -150.85 dBW   delta = -12.11 dB
+
+==============================================================================
+3. Doppler  (plate moving at -8 m/s, sensor at rest)
+==============================================================================
+   interaction points : 484
+   mean radial velocity: -8.0000 m/s  (expected -8.0000)
+   mean range         : 30.0000 m  (expected 30.0000)
+
+==============================================================================
+4. Road multipath  (two-ray interference vs. analytic model)
+==============================================================================
+   sensor h = 0.5 m, plate centre h = 0.75 m, asphalt road
+   R =  20.0 m   direct  -121.11 dBW   with road  -123.17 dBW   interference  -2.06 dB   (28812 IA points)
+   R =  25.0 m   direct  -123.24 dBW   with road  -121.14 dBW   interference  +2.10 dB   (28755 IA points)
+   R =  30.0 m   direct  -123.10 dBW   with road  -126.95 dBW   interference  -3.85 dB   (28740 IA points)
+   R =  35.0 m   direct  -123.91 dBW   with road  -125.21 dBW   interference  -1.31 dB   (28725 IA points)
+   R =  40.0 m   direct  -129.86 dBW   with road  -128.89 dBW   interference  +0.96 dB   (28692 IA points)

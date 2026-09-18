@@ -1,0 +1,15 @@
+scanning .../carmaker/win64-15.1/Data/Sensor
+
+  LidarRSI_Default         (not radar related: FileIdent 'CarMaker-LidarRSIBeams')
+  MaterialLib              MaterialLib      22 materials (e.g. asphalt eps=4.4, scatter=20.0 deg)
+  RCS_Bicycle              RCS Map          722 samples, ProbExist 2, OcclusionFactor 0.20, max 8.3 dBm^2
+  RCS_Car                  RCS Map          361 samples, ProbExist 4, OcclusionFactor 0.85, max 38.0 dBm^2
+  RCS_GuardRailPost        RCS Map          361 samples, ProbExist 0, OcclusionFactor 0.99, max 32.6 dBm^2
+  RCS_Pedestrian           RCS Map          722 samples, ProbExist 2, OcclusionFactor 0.05, max 18.0 dBm^2
+  RCS_Thela                RCS Map          361 samples, ProbExist 4, OcclusionFactor 0.85, max 38.0 dBm^2
+  RCS_Truck                RCS Map          361 samples, ProbExist 4, OcclusionFactor 0.95, max 48.0 dBm^2
+  RadarRSI_Default         RadarRSI config  Tx 181x181 (peak 19.85 dB), Rx 181x181 (peak 14.47 dB), 16 VRx
+  Radar_Default            AntennaGainMap   181x181 samples, BeamWidth (20.0, 15.0), peak 20.37 dB
+  USonicRSI_Default        (not radar related: FileIdent 'CarMaker-SoundLobeMap')
+
+  9 radar file(s) read successfully, 2 skipped, 0 error(s)

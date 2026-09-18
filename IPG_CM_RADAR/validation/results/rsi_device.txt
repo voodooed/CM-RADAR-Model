@@ -1,0 +1,98 @@
+==============================================================================
+1. Front-End noise (Equation 525)
+==============================================================================
+   T = 300 K, B = 200 MHz, NF = 5 dB
+   by hand : 2.619597e-12 W = -85.818 dBm
+   by code : 2.619597e-12 W = -85.818 dBm
+   ok 
+   NoiseScalingRange LUT (DemoCar_SensorRadarRSI values):
+      r =   0.00 m -> +10.00 dB (LUT: +10.0 dB)  ok 
+      r =  10.24 m -> + 7.93 dB (LUT: +8.0 dB)  ok 
+      r =  19.69 m -> + 5.09 dB (LUT: +5.0 dB)  ok 
+      r =  40.16 m -> +-0.00 dB (LUT: +0.0 dB)  ok 
+      r =  80.31 m -> +-1.00 dB (LUT: +-1.0 dB)  ok 
+      r = 100.00 m -> +-1.00 dB (LUT: +-1.0 dB)  ok 
+   empirical mean |noise|^2 in the cube = 2.6173e-12 W, P_Noise = 2.6196e-12 W  ok 
+
+==============================================================================
+2. Range-Doppler processing
+==============================================================================
+   range axis  : 0 .. 100.0 m over 128 bins -> 0.7874 m/bin
+   doppler axis: (-30.0, 30.0) m/s over 64 bins -> 0.9524 (m/s)/bin
+
+   a) a target that lands exactly on a bin keeps its amplitude
+      (documented normalisation: 'All detections are normalized to compensate
+       for any signal processing gain or loss')
+         r [m]   v [m/s]  peak bin r  peak bin v   |A| peak   |A| in
+         25.20     10.00          32          42     1.0000   1.0000  ok 
+         50.39    -12.86          64          18     0.5000   0.5000  ok 
+         75.59     -0.48          96          31     2.0000   2.0000  ok 
+      amplitude normalisation preserved (documented): ok 
+
+   b) resolution: two equal targets merge below ~1 range bin
+      separation 0.25 bins (0.197 m) -> 1 peak(s)
+      separation 0.50 bins (0.394 m) -> 1 peak(s)
+      separation 1.00 bins (0.787 m) -> 1 peak(s)
+      separation 2.00 bins (1.575 m) -> 2 peak(s)
+
+   c) window functions and spectral leakage
+      target placed half a bin off-grid (worst case for leakage)
+      Rectangular : peak 0.6366, scalloping loss  -3.92 dB, leakage 3+ bins away  -16.89 dBc
+      Hann        : peak 0.8510, scalloping loss  -1.40 dB, leakage 3+ bins away  -40.26 dBc
+      (Hann trades a larger scalloping loss for much lower leakage - the
+       documented reason for offering the two windows)
+
+   d) aliasing: a Doppler beyond the unambiguous interval folds back
+      v =   +12.86 m/s -> doppler bin  45 (unambiguous interval = 60.0 m/s)  ok 
+      v =   +72.86 m/s -> doppler bin  45 (unambiguous interval = 60.0 m/s)  ok 
+      v =   -47.14 m/s -> doppler bin  45 (unambiguous interval = 60.0 m/s)  ok 
+      v =  +132.86 m/s -> doppler bin  45 (unambiguous interval = 60.0 m/s)  ok 
+      folding into the unambiguous interval: ok 
+      (set cfg.doppler_aliasing = False to clamp instead, which is what the
+       shipped GPU-Coding-Interface sample Radar.cu does)
+
+==============================================================================
+3. OS-CFAR (Equation 526) on pure noise
+==============================================================================
+   'the CUT has to be larger than the m-th value, m = T_OS-CFAR * N_lay^tot'
+   S_OS-CFAR =   0.0 dB -> false alarm rate 0.06946  ( 569.0 cells of 8192)
+   S_OS-CFAR =   2.0 dB -> false alarm rate 0.01569  ( 128.5 cells of 8192)
+   S_OS-CFAR =   4.0 dB -> false alarm rate 0.00186  (  15.2 cells of 8192)
+   S_OS-CFAR =   6.0 dB -> false alarm rate 0.00006  (   0.5 cells of 8192)
+   S_OS-CFAR =   9.0 dB -> false alarm rate 0.00000  (   0.0 cells of 8192)
+   S_OS-CFAR =  11.0 dB -> false alarm rate 0.00000  (   0.0 cells of 8192)
+   monotonically decreasing with the scaling factor: expected behaviour
+   strong target at r = 50.0 m, v = 5.0 m/s -> 1 detection(s) at [(49.61, 5.24)]  ok 
+
+==============================================================================
+4. Peak interpolation (Equations 527 / 528)
+==============================================================================
+   p = 1/2 (alpha - gamma) / (alpha - 2 beta + gamma)
+   y(p) = beta - 1/4 p (alpha - gamma)
+    true offset  true peak          p       y(p)     err(p)     err(y)
+         -0.400      5.000  -0.400000   5.000000   5.55e-17   0.00e+00
+         -0.200      5.000  -0.200000   5.000000   5.55e-17   0.00e+00
+          0.000      5.000  -0.000000   5.000000   0.00e+00   0.00e+00
+          0.150      5.000   0.150000   5.000000   0.00e+00   0.00e+00
+          0.350      5.000   0.350000   5.000000   5.55e-17   0.00e+00
+   exact for a parabola: ok 
+
+   applied to a synthetic RD peak (sub-bin target position):
+      true  40.0000 m   bin  40.1575 m   interpolated  40.1503 m   error  15.03 cm
+      true  40.1969 m   bin  40.1575 m   interpolated  40.1576 m   error   3.93 cm
+      true  40.3937 m   bin  40.1575 m   interpolated  40.1866 m   error  20.71 cm
+
+==============================================================================
+5. Angular processing (lambda/2 ULA + spatial DFT)
+==============================================================================
+   n_ULA = 16, zero paddings = 112, bins = 128
+   Rayleigh resolution ~ 2/n_ULA = 0.1250 in sin(az) = 7.18 deg at boresight
+     true az   estimated az     error
+      -40.00        -39.997     0.003  ok 
+      -20.00        -20.002     0.002  ok 
+       -5.00         -5.002     0.002  ok 
+        0.00          0.000     0.000  ok 
+        7.50          7.497     0.003  ok 
+       25.00         24.999     0.001  ok 
+       45.00         44.995     0.005  ok 
+   ok 
