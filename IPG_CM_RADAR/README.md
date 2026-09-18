@@ -1,4 +1,4 @@
-# IPG CarMaker radar models — analysis and independent reference implementation
+# IPG CarMaker radar models — independent reference implementation
 
 Independent, CarMaker-free Python reference implementations of the **two** radar
 sensor models in IPG CarMaker 15.1, together with the analysis they are based on
@@ -8,10 +8,10 @@ Analysed against a **CarMaker 15.1** installation (`carmaker/win64-15.1`).
 All paths in this package are relative to its own root; the only external
 path you may need is your CarMaker installation directory — see *Running it*.
 
-> **New to these models? Start with
+> **For the theory, start with
 > [`docs/IPG_radar_models.md`](docs/IPG_radar_models.md).**
 > It builds up what a radar does from scratch, then explains both CarMaker models
-> in plain terms — no CarMaker knowledge assumed. ~25 minutes. Read it before the
+> in plain terms. Read it before the
 > Reference Manual, which is a lookup reference and assumes the background.
 
 ---
